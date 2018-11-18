@@ -1,0 +1,126 @@
+New in 1.1 (rev. 1???) since 1.0
+- reworked online game lobbby
+- different game settings (rules, final scores and speeds) possible on the same server
+- bot scripting overhaul (needs some work before release)
+- new xml based replay file format
+
+New in 1.0 (rev. 1516) since RC4:
+- small improvements to lua rules
+- smoother loading of server list
+- improved mouse input in online games
+- lots of tiny fixes
+
+
+New in 1.0 RC 4 (rev. 1345) since RC3:
+- Added Lobby
+- Added lua gamerules
+- Updated to SDL2
+- some more code refactoring
+
+New in 1.0 RC 3 (rev. 1123) since RC 2:
+- Fixed ball rotation in onlinegame
+- Fixed switched player bug
+- Fixed missing colon in server info
+- Fixed broken play again button in replay player
+
+New in 1.0 RC 2 (rev. 1111) since RC 1:
+- Show waiting player in network game menu (currently not updated)
+- Load server list from blobby.sourceforge.net
+- Option to specify maximum clients in server.xml
+- Added replay info screen
+- Added italian translation
+- Optimized sending replays over network
+- New replay default names
+- Possibility to select server port to connect to (Thanks to Stefano Ansaloni)
+- Fix: CPU usage in network game menu
+- Fix: trying to save replays with invalid filename now issues an error message
+- Fix: writing over existing replays no longer possible
+- Fix: Ball speed
+- Fix: typos in translation
+- Fix: "two hit bug" (again ;)
+- Fix: server crash when server could not find server.xml
+- Fix: server did not delete temp replay files
+- Fix: file list properly freed in replay menu
+- some code refractoring
+- REPLAY PLAYER:
+	- more information saved in replay files: final score
+    - better jumping to replay positions
+    - show replay info in replay menu
+
+New in 1.0 RC 1 (rev. 732) since Beta 9:
+* Features:
+- REPLAY PLAYER:
+    still in development, features for now:
+	- pausing
+	- fast forwarding
+	- jumping to certain positions in replay (may take some time
+	new replay save file format, not fixed yet, so replays may become incompatible in the future 
+- enabled writing in chat without clicking into editbox
+- Blobby speed more stable on slow systems (framedrop)
+- auto disconnect when game is closed
+- use native keyboard layout when possible
+- small physics improvements
+- mouse input for online games
+- join server with double click
+- improved chat UI
+- small gfx enhancements
+
+* Bugfixes:
+- Fix: severe network problem
+- Fix: "two hit bug"
+- Fix: wrong winning condition in default rules
+- Fix: online replays sometimes not saved
+- squished ball generates only one sound now
+- corrected version in server startup message
+- [Windows] fixed server output messages 
+- [Windows] pointer no longer freezes when alt+tab
+
+* Performance:
+- fixed a major memory leak in dedicated server
+- removed possible lag due to rounding issues in speed controller
+- removed needless wait in network server (only 1 ms)
+- improved OpenGL performance significantly (10-30%)
+- fixed some small and unlikely memleaks
+- fixed performance killer in "... has won" screen
+
+
+New in Beta 9 (rev. 622) since Alpha 8:
+- network game: reduced data transfer
+- fixed memleaks
+- OGL: improved text rendering speed
+- SDL: improved render speed for morphing blobs
+- generally improved performance
+- limited FPS in menu
+- chat
+- clock
+- blood in SDL mode
+- bots sorted
+- online replays
+- improved bots: difficulty adjustable, better api, better documentation
+- customizable rules file
+
+
+New in Alpha 8 (rev. 469) since Alpha 6:
+- some graphics improvements
+- performance improvements
+- names
+- credits added
+
+
+New in Alpha 6 (rev. 335) since Alpha 5:
+- More options
+- Network support
+- Fixed Speedcontroller
+- Fixed ball reset
+
+Since Alpha 4:
+- Many options configurable through new GUI
+- Configurable game speed, with frame dropping for slow PCs
+- Sound volume option
+- Keyboard, mouse, Joystick and Gamepad can be used for input now
+- Further optimized physics by Fliegus123 (old replays won't work)
+- Many bugfixes for the scripting API, bots which rely on 
+	estimate/estimx/estimy now work much better
+- Special cooperation with the OpenAnno team: Sven Rech will work for Blobby
+	until final release
+
