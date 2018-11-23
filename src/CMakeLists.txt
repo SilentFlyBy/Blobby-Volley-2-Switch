@@ -5,8 +5,8 @@ add_subdirectory(raknet)
 add_subdirectory(blobnet)
 
 add_definitions(-DTIXML_USE_STL)
-set(CMAKE_CXX_FLAGS "-std=c++11")
-set(CMAKE_CXX_FLAGS "-Wall")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall")
 include_directories(.)
 
 set(common_SRC
@@ -81,7 +81,8 @@ set (blobby-server_SRC ${common_SRC}
 find_package(Boost REQUIRED)
 find_package(PhysFS REQUIRED)
 find_package(OpenGL)
-find_package(Threads REQUIRED)
+# find_package(Threads REQUIRED)
+find_library(NX nx)
 
 INCLUDE(FindPkgConfig)
 PKG_SEARCH_MODULE(SDL2 REQUIRED sdl2)
@@ -100,8 +101,16 @@ else (CMAKE_SYSTEM_NAME STREQUAL Windows)
 	set(RAKNET_LIBRARIES raknet)
 endif (CMAKE_SYSTEM_NAME STREQUAL Windows)
 
-add_executable(blobby ${blobby_SRC})
-target_link_libraries(blobby lua raknet blobnet tinyxml ${RAKNET_LIBRARIES} ${PHYSFS_LIBRARY} ${OPENGL_LIBRARIES} ${SDL2_LIBRARIES} pthread)
+add_executable(blobby.elf ${blobby_SRC})
+#target_link_libraries(blobby lua raknet blobnet tinyxml ${RAKNET_LIBRARIES} ${PHYSFS_LIBRARY} ${OPENGL_LIBRARIES} ${SDL2_LIBRARIES} pthread)
+target_link_libraries(blobby.elf lua raknet blobnet tinyxml ${RAKNET_LIBRARIES} ${PHYSFS_LIBRARY} ${OPENGL_LIBRARIES} /opt/devkitpro/portlibs/switch/lib/libSDL2.a /opt/devkitpro/portlibs/switch/lib/libEGL.a /opt/devkitpro/portlibs/switch/lib/libdrm_nouveau.a /opt/devkitpro/portlibs/switch/lib/libglad.a /opt/devkitpro/portlibs/switch/lib/libglapi.a /opt/devkitpro/libnx/lib/libnx.a)
+
+add_custom_command(
+	OUTPUT blobby.nro
+	COMMAND ${DEVKITPRO}/tools/bin/elf2nro blobby.elf blobby.nro
+	DEPENDS blobby.elf)
+
+add_custom_target(blobby.nro ALL)
 
 if (UNIX)
 	add_executable(blobby-server ${blobby-server_SRC})
@@ -109,7 +118,7 @@ if (UNIX)
 endif (UNIX)
 
 if (CMAKE_SYSTEM_NAME STREQUAL Windows)
-	set_target_properties(blobby PROPERTIES LINK_FLAGS "-mwindows") # disable the console window
+	set_target_properties(blobby.elf PROPERTIES LINK_FLAGS "-mwindows") # disable the console window
 endif (CMAKE_SYSTEM_NAME STREQUAL Windows)
 
 if (WIN32)
