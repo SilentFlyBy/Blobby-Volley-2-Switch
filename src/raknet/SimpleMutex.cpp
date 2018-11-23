@@ -37,8 +37,12 @@ SimpleMutex::SimpleMutex()
 #ifdef _WIN32
 	InitializeCriticalSection(&criticalSection);
 #else
+#ifdef __SWITCH__
+mutexInit(&mutex);
+#else
 	int error = pthread_mutex_init(&hMutex, 0);
 	assert(error==0);
+#endif
 #endif
 }
 
@@ -48,7 +52,11 @@ SimpleMutex::~SimpleMutex()
 	//	CloseHandle(hMutex);
 	DeleteCriticalSection(&criticalSection);
 #else
+#ifdef __SWITCH__
+	mutexUnlock(&mutex);
+#else
 	pthread_mutex_destroy(&hMutex);
+#endif
 #endif
 }
 
@@ -93,8 +101,13 @@ void SimpleMutex::Lock(void)
 	EnterCriticalSection(&criticalSection);
 
 #else
+#ifdef __SWITCH__
+	int error = mutexTryLock(&mutex);
+	assert(error == 1);
+#else
 	int error = pthread_mutex_lock(&hMutex);
 	assert(error==0);
+#endif
 #endif
 }
 
@@ -104,8 +117,12 @@ void SimpleMutex::Unlock(void)
 	//	ReleaseMutex(hMutex);
 	LeaveCriticalSection(&criticalSection);
 #else
+#ifdef __SWITCH__
+	mutexUnlock(&mutex);
+#else
 	int error = pthread_mutex_unlock(&hMutex);
 	assert(error==0);
+#endif
 #endif
 }
 

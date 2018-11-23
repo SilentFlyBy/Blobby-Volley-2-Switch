@@ -42,6 +42,10 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 	#endif
 #endif
 
+#ifdef __SWITCH__
+#include <switch.h>
+#endif
+
 #include "RenderManager.h"
 #include "SoundManager.h"
 #include "InputManager.h"
@@ -65,7 +69,12 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 // this global allows the host game thread to be killed
 extern std::atomic<bool> gKillHostThread;
-extern boost::shared_ptr<std::thread> gHostedServerThread;
+#ifdef __SWITCH__
+extern Thread*
+#else
+extern boost::shared_ptr<std::thread> 
+#endif
+			gHostedServerThread;
 
 /* implementation */
 
@@ -101,7 +110,7 @@ void setupPHYSFS()
 	fs.addToSearchPath(baseSearchPath + "backgrounds.zip");
 	fs.addToSearchPath(baseSearchPath + "rules.zip");
 
-	#if defined(WIN32)
+	#if defined(WIN32) || defined(__SWITCH__)
 		// Just write in installation directory
 		fs.setWriteDir("data");
 	#else
@@ -194,7 +203,17 @@ void setupPHYSFS()
 	DEBUG_STATUS("SDL initialised");
 
 	atexit(SDL_Quit);
-	atexit([](){gKillHostThread=true; if(gHostedServerThread) gHostedServerThread->join();});
+	atexit([]()
+	{
+		gKillHostThread=true; 
+		if(gHostedServerThread) {
+#ifdef __SWITCH__
+			threadWaitForExit(gHostedServerThread);
+#else
+			gHostedServerThread->join();
+#endif
+		}
+	});
 	srand(SDL_GetTicks());
 	// Default is OpenGL and false
 	// choose renderer

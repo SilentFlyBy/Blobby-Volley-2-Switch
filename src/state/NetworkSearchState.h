@@ -66,8 +66,11 @@ private:
 
 	ClientList mQueryClients;
 	RakClient* mDirectConnectClient;
+#ifdef __SWITCH__
 
+#else
 	std::future<void> mPingJob;
+#endif
 
 	unsigned mSelectedServer;
 	bool mDisplayInfo;

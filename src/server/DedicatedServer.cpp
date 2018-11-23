@@ -35,7 +35,9 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 #ifndef WIN32
 #ifndef __ANDROID__
+#ifndef __SWITCH__
 #include <sys/syslog.h>
+#endif
 #endif
 #endif
 
@@ -100,8 +102,15 @@ void DedicatedServer::queuePackets()
 			case ID_LOBBY:
 			case ID_BLOBBY_SERVER_PRESENT:
 			{
+#ifdef __SWITCH__
+				mPacketQueueMutex.Lock();
+#else
 				std::lock_guard<std::mutex> lock( mPacketQueueMutex );
+#endif
 				mPacketQueue.push_back( packet );
+#ifdef __SWITCH__
+				mPacketQueueMutex.Unlock();
+#endif
 				break;
 			}
 			// game progress packets
@@ -113,7 +122,11 @@ void DedicatedServer::queuePackets()
 			case ID_RULES:
 			{
 				// disallow player map changes while we sort out packets!
+#ifdef __SWITCH__
+				mPlayerMapMutex.Lock();
+#else
 				std::lock_guard<std::mutex> lock( mPlayerMapMutex );
+#endif
 
 				auto player = mPlayerMap.find(packet->playerId);
 				// delete the disconnectiong player
@@ -123,6 +136,10 @@ void DedicatedServer::queuePackets()
 				} else {
 					syslog(LOG_ERR, "received packet from player not in playerlist!");
 				}
+
+#ifdef __SWITCH__
+				mPlayerMapMutex.Unlock();
+#endif
 
 				break;
 			}
@@ -138,9 +155,16 @@ void DedicatedServer::processPackets()
 	{
 		packet_ptr packet;
 		{
+#ifdef __SWITCH__
+			mPacketQueueMutex.Lock();
+#else
 			std::lock_guard<std::mutex> lock(mPacketQueueMutex);
+#endif
 			packet = mPacketQueue.front();
 			mPacketQueue.pop_front();
+#ifdef __SWITCH__
+			mPacketQueueMutex.Unlock();
+#endif
 		}
 		SWLS_PacketCount++;
 
@@ -178,8 +202,15 @@ void DedicatedServer::processPackets()
 
 					// no longer count this player as connected. protect this change with a mutex
 					{
+#ifdef __SWITCH__
+						mPlayerMapMutex.Lock();
+#else
 						std::lock_guard<std::mutex> lock( mPlayerMapMutex );
+#endif
 						mPlayerMap.erase( player );
+#ifdef __SWITCH__
+						mPlayerMapMutex.Unlock();
+#endif
 					}
 					mMatchMaker.removePlayer( player->first );
 				}
@@ -202,8 +233,15 @@ void DedicatedServer::processPackets()
 
 				// add to player map. protect with mutex
 				{
+#ifdef __SWITCH__
+					mPlayerMapMutex.Lock();
+#else
 					std::lock_guard<std::mutex> lock( mPlayerMapMutex );
+#endif
 					mPlayerMap[packet->playerId] = newplayer;
+#ifdef __SWITCH__
+					mPlayerMapMutex.Unlock();
+#endif
 				}
 				mMatchMaker.addPlayer(packet->playerId, newplayer);
 				syslog(LOG_DEBUG, "New player \"%s\" connected from %s ", newplayer->getName().c_str(), packet->playerId.toString().c_str());

@@ -34,9 +34,13 @@
 #ifdef _WIN32
 #include <process.h>
 #else
+#ifdef __SWITCH__
+#define closesocket close
+#else
 #define closesocket close
 #include <unistd.h>
 #include <pthread.h>
+#endif
 #endif
 #include <ctype.h> // toupper
 
@@ -48,7 +52,13 @@
 #ifdef _WIN32
 #include <malloc.h>
 #else
+#ifdef __SWITCH__
+#include <switch.h>
+#include <SDL2/SDL.h>
+#include <malloc.h>
+#else
 #include <stdlib.h>
+#endif
 #endif
 
 #include <cstring>
@@ -230,6 +240,18 @@ bool RakPeer::Initialize( unsigned short MaximumNumberOfPeers, unsigned short lo
 			}
 
 #else
+#ifdef __SWITCH__
+			if ( isMainLoopThreadActive == false )
+			{
+				Result result = threadCreate( &processPacketsThreadHandle, (ThreadFunc)UpdateNetworkLoop, this, 0, 0x3F, -2);
+				if ( result != 0) {
+					Disconnect( 0 );
+					return false;
+				}
+
+				threadClose( &processPacketsThreadHandle);
+			}
+#else
 			pthread_attr_t attr;
 			pthread_attr_init( &attr );
 			pthread_attr_setdetachstate( &attr, PTHREAD_CREATE_DETACHED );
@@ -251,6 +273,7 @@ bool RakPeer::Initialize( unsigned short MaximumNumberOfPeers, unsigned short lo
 
 			processPacketsThreadHandle = 0;
 #endif
+#endif
 
 
 			// Wait for the threads to activate.  When they are active they will set these variables to true
@@ -259,7 +282,11 @@ bool RakPeer::Initialize( unsigned short MaximumNumberOfPeers, unsigned short lo
 #ifdef _WIN32
 				Sleep( 10 );
 #else
+#ifdef __SWITCH__
+				sleep( 10 * 1000 );
+#else
 				usleep( 10 * 1000 );
+#endif
 #endif
 
 		}
@@ -413,7 +440,12 @@ void RakPeer::Disconnect( unsigned int blockDuration )
 #ifdef _WIN32
 			Sleep( 15 );
 #else
+#ifdef __SWITCH__
+			sleep( 15 * 1000 );
+#else
+
 			usleep( 15 * 1000 );
+#endif
 #endif
 			time = RakNet::GetTime();
 		}
@@ -432,7 +464,12 @@ void RakPeer::Disconnect( unsigned int blockDuration )
 #ifdef _WIN32
 		Sleep( 15 );
 #else
+#ifdef __SWITCH__
+		sleep( 15 * 1000 );
+#else
+
 		usleep( 15 * 1000 );
+#endif
 #endif
 
 	// Reset the remote system list after the threads are known to have stopped so threads do not add or update data to them after they are reset
@@ -2213,7 +2250,11 @@ void* UpdateNetworkLoop( void* arguments )
 #ifdef _WIN32
 		Sleep( rakPeer->threadSleepTimer );
 #else
+#ifdef __SWITCH__
+		sleep(rakPeer->threadSleepTimer );
+#else
 		usleep( rakPeer->threadSleepTimer * 1000 );
+#endif
 #endif
 
 	}

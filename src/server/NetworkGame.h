@@ -22,7 +22,13 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 #include <list>
 #include <mutex>
+
+#ifdef __SWITCH__
+#include <switch.h>
+#include "raknet/SimpleMutex.h"
+#else
 #include <thread>
+#endif
 
 #include <boost/scoped_ptr.hpp>
 #include <boost/shared_array.hpp>
@@ -91,15 +97,30 @@ class NetworkGame : public ObjectCounter<NetworkGame>
 		PlayerSide mSwitchedSide;
 
 		PacketQueue mPacketQueue;
-		std::mutex mPacketQueueMutex;
+#ifdef __SWITCH__
+		SimpleMutex 
+#else
+		std::mutex 
+#endif
+			mPacketQueueMutex;
 
 		boost::scoped_ptr<DuelMatch> mMatch;
+#ifdef __SWITCH__
+	public:
 		SpeedController mSpeedController;
+#else
+		SpeedController mSpeedController;
+#endif
 		boost::shared_ptr<InputSource> mLeftInput;
 		boost::shared_ptr<InputSource> mRightInput;
 		unsigned mLeftLastTime = -1;
 		unsigned mRightLastTime = -1;
-		std::thread mGameThread;
+#ifdef __SWITCH__
+		Thread 
+#else
+		std::thread 
+#endif
+			mGameThread;
 
 		boost::scoped_ptr<ReplayRecorder> mRecorder;
 
@@ -110,3 +131,6 @@ class NetworkGame : public ObjectCounter<NetworkGame>
 		boost::shared_array<char> mRulesString;
 };
 
+#ifdef __SWITCH__
+		void gameValidLoop(void*);
+#endif

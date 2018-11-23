@@ -23,7 +23,11 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include <string>
 #include <map>
 #include <list>
+#ifdef __SWITCH__
+#include "raknet/SimpleMutex.h"
+#else
 #include <mutex>
+#endif
 #include <deque>
 #include <iosfwd>
 #include <boost/scoped_ptr.hpp>
@@ -103,11 +107,21 @@ class DedicatedServer
 		// containers for all games and mapping players to their games
 		std::list< boost::shared_ptr<NetworkGame> > mGameList;
 		std::map< PlayerID, boost::shared_ptr<NetworkPlayer>> mPlayerMap;
-		std::mutex mPlayerMapMutex;
+#ifdef __SWITCH__
+		SimpleMutex 
+#else
+		std::mutex 
+#endif
+			mPlayerMapMutex;
 
 		// packet queue
 		std::deque<packet_ptr> mPacketQueue;
-		std::mutex mPacketQueueMutex;
+#ifdef __SWITCH__
+		SimpleMutex 
+#else 
+		std::mutex 
+#endif
+			mPacketQueueMutex;
 
 		MatchMaker mMatchMaker;
 };

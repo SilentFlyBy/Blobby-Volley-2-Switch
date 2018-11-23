@@ -38,7 +38,12 @@
 #ifdef _WIN32
 #include <malloc.h>
 #else
+#ifdef __SWITCH__
+#include <switch.h>
+#include <SDL2/SDL.h>
+#else
 #include <stdlib.h>
+#endif
 #endif
 
 #include <cstring>

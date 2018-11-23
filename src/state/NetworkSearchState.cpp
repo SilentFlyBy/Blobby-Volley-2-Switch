@@ -29,6 +29,10 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include <thread>
 #include <iostream> // debugging
 
+#ifdef __SWITCH__
+#include <switch.h>
+#endif
+
 #include <boost/lexical_cast.hpp>
 #include <boost/make_shared.hpp>
 
@@ -54,7 +58,12 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 
 // control variables for a dedicated server thread in case a game is hosted
-boost::shared_ptr<std::thread> gHostedServerThread;
+#ifdef __SWITCH__
+Thread*
+#else
+boost::shared_ptr<std::thread> 
+#endif
+	gHostedServerThread;
 std::atomic<bool> gKillHostThread{false};
 
 /* implementation */
@@ -89,7 +98,7 @@ void NetworkSearchState::searchServers()
 	mCancelPing = false;
 	// we need the explicit async launch policy here, because otherwise gcc will always launch deferred and we have no sync point
 	// where we would wait for that.
-	mPingJob = std::async(std::launch::async, [this](){ doSearchServers();});
+	// mPingJob = std::async(std::launch::async, [this](){ doSearchServers();});
 }
 
 void NetworkSearchState::step_impl()
@@ -382,7 +391,11 @@ void NetworkSearchState::step_impl()
 		};
 
 		gKillHostThread = true;
+#ifdef __SWITCH__
+		//threadCreate(gHostedServerThread, (ThreadFunc)server_func, nullptr, 0x200000, 0, 2);
+#else
 		gHostedServerThread = boost::make_shared<std::thread>(server_func);
+#endif
 		SDL_Delay(100); // give the server some time to start up.
 		// might cause a slight visible delay, but I think we can
 		// live with that right now.

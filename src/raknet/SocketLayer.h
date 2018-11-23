@@ -39,6 +39,9 @@
 #include <sys/socket.h>
 #include <netinet/in.h>
 #include <arpa/inet.h>
+#ifdef __SWITCH__
+#undef __BSD_VISIBLE
+#endif
 #include <netdb.h>
 #include <unistd.h>
 /**

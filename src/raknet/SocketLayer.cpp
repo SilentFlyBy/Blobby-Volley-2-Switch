@@ -426,8 +426,8 @@ char const * SocketLayer::ipToString(struct sockaddr const * const socketaddress
 	{
 	case AF_INET:
 		return inet_ntop(AF_INET, &(((struct sockaddr_in *)socketaddress)->sin_addr), buffer, bufferSize);
-	case AF_INET6:
-		return inet_ntop(AF_INET6, &(((struct sockaddr_in6 *)socketaddress)->sin6_addr), buffer, bufferSize);
+	//case AF_INET6:
+		//return inet_ntop(AF_INET6, &(((struct sockaddr_in6 *)socketaddress)->sin6_addr), buffer, bufferSize);
 	default:
 		return NULL;
 	}

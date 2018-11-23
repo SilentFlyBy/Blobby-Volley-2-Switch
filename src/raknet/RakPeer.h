@@ -508,8 +508,13 @@ protected:
 #ifdef _WIN32
 
 	HANDLE
+
+#else
+#ifdef __SWITCH__
+	Thread
 #else
 	pthread_t
+#endif
 #endif
 		processPacketsThreadHandle, recvfromThreadHandle;
 	SimpleMutex incomingQueueMutex;

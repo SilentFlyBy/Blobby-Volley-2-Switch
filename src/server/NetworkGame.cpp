@@ -102,8 +102,11 @@ NetworkGame::NetworkGame(RakServer& server, boost::shared_ptr<NetworkPlayer> lef
 	broadcastBitstream(stream);
 
 	// game loop
+#ifdef __SWITCH__
+	threadCreate(&mGameThread, gameValidLoop, this, 0x200000, 0x2C, 1);
+#else
 	mGameThread = std::thread(
-		[this]()
+		[this]() -> void*
 		{
 			while(mGameValid)
 			{
@@ -113,18 +116,30 @@ NetworkGame::NetworkGame(RakServer& server, boost::shared_ptr<NetworkPlayer> lef
 				mSpeedController.update();
 			}
 		}					);
+#endif
 }
 
 NetworkGame::~NetworkGame()
 {
 	mGameValid = false;
+#ifdef __SWITCH__
+	threadWaitForExit(&mGameThread);
+#else
 	mGameThread.join();
+#endif
 }
 
 void NetworkGame::injectPacket(const packet_ptr& packet)
 {
+#ifdef __SWITCH__
+	mPacketQueueMutex.Lock();
+#else
 	std::lock_guard<std::mutex> lock(mPacketQueueMutex);
+#endif
 	mPacketQueue.push_back(packet);
+#ifdef __SWITCH__
+	mPacketQueueMutex.Unlock();
+#endif
 }
 
 void NetworkGame::broadcastBitstream(const RakNet::BitStream& stream, const RakNet::BitStream& switchedstream)
@@ -165,9 +180,16 @@ void NetworkGame::processPackets()
 	{
 		packet_ptr packet;
 		{
+#ifdef __SWITCH__
+			mPacketQueueMutex.Lock();
+#else
 			std::lock_guard<std::mutex> lock(mPacketQueueMutex);
+#endif
 			packet = mPacketQueue.front();
 			mPacketQueue.pop_front();
+#ifdef __SWITCH__
+			mPacketQueueMutex.Unlock();
+#endif
 		}
 
 		processPacket( packet );
@@ -451,3 +473,13 @@ PlayerID NetworkGame::getPlayerID( PlayerSide side ) const
 	assert(0);
 }
 
+void gameValidLoop(void* p) {
+	NetworkGame* ctx = (NetworkGame*)p;
+	while(ctx->mGameValid)
+			{
+				ctx->processPackets();
+				ctx->step();
+				SWLS_GameSteps++;
+				ctx->mSpeedController.update();
+			}
+}

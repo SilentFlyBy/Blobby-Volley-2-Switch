@@ -34,8 +34,12 @@
 #ifdef _WIN32
 #include <windows.h>
 #else
+#ifdef __SWITCH__
+#include <switch.h>
+#else
 #include <pthread.h>
 #include <sys/types.h>
+#endif
 #endif
 
 class SimpleMutex
@@ -50,7 +54,11 @@ private:
 	//HANDLE hMutex;
 	CRITICAL_SECTION criticalSection; // Docs say this is faster than a mutex for single process access
 	#else
+	#ifdef __SWITCH__
+	Mutex mutex;
+	#else
 	pthread_mutex_t hMutex;
+	#endif
 	#endif
 };
 
