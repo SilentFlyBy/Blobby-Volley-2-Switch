@@ -473,6 +473,7 @@ PlayerID NetworkGame::getPlayerID( PlayerSide side ) const
 	assert(0);
 }
 
+#ifdef __SWITCH__
 void gameValidLoop(void* p) {
 	NetworkGame* ctx = (NetworkGame*)p;
 	while(ctx->mGameValid)
@@ -483,3 +484,4 @@ void gameValidLoop(void* p) {
 				ctx->mSpeedController.update();
 			}
 }
+#endif

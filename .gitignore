@@ -1,1 +1,6 @@
 build
+.idea
+.vscode
+cmake-build-switch
+cmake-debug-switch
+cmake-build-debug

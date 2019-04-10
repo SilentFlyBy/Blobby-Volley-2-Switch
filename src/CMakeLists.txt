@@ -88,7 +88,8 @@ else (SWITCH)
 endif (SWITCH)
 
 INCLUDE(FindPkgConfig)
-PKG_SEARCH_MODULE(SDL2 REQUIRED sdl2)
+find_package(SDL2 REQUIRED)
+# PKG_SEARCH_MODULE(SDL2 REQUIRED sdl2)
 
 include_directories(
 	${Boost_INCLUDE_DIR} ${PHYSFS_INCLUDE_DIR}
@@ -107,13 +108,14 @@ endif (CMAKE_SYSTEM_NAME STREQUAL Windows)
 
 if (SWITCH)
 	add_executable(blobby.elf ${blobby_SRC})
-	target_link_libraries(blobby.elf lua raknet blobnet tinyxml ${RAKNET_LIBRARIES} ${PHYSFS_LIBRARY} ${OPENGL_LIBRARIES} /opt/devkitpro/portlibs/switch/lib/libSDL2.a /opt/devkitpro/portlibs/switch/lib/libEGL.a /opt/devkitpro/portlibs/switch/lib/libdrm_nouveau.a /opt/devkitpro/portlibs/switch/lib/libglad.a /opt/devkitpro/portlibs/switch/lib/libglapi.a /opt/devkitpro/libnx/lib/libnx.a)
+	target_link_libraries(blobby.elf lua raknet blobnet tinyxml ${RAKNET_LIBRARIES} ${PHYSFS_LIBRARY} ${OPENGL_LIBRARIES} ${SDL2_LIBRARIES} ${DEVKITPRO}/portlibs/switch/lib/libEGL.a ${DEVKITPRO}/portlibs/switch/lib/libdrm_nouveau.a ${DEVKITPRO}/portlibs/switch/lib/libglapi.a ${DEVKITPRO}/libnx/lib/libnx.a)
 	add_custom_command(
 		OUTPUT blobby.nro
-		COMMAND ${DEVKITPRO}/tools/bin/elf2nro blobby.elf blobby.nro
+		COMMAND ${DEVKITPRO}/tools/bin/elf2nro blobby.elf blobby.nro --icon=${CMAKE_SOURCE_DIR}/data/Icon.jpg
 		DEPENDS blobby.elf)
-	add_custom_target(blobby.nro ALL)
-else(SWITCH)
+	add_custom_target(blobby ALL DEPENDS blobby.nro)
+else (SWITCH)
+	add_executable(blobby ${blobby_SRC})
 	target_link_libraries(blobby lua raknet blobnet tinyxml ${RAKNET_LIBRARIES} ${PHYSFS_LIBRARY} ${OPENGL_LIBRARIES} ${SDL2_LIBRARIES} pthread)
 endif (SWITCH)
 

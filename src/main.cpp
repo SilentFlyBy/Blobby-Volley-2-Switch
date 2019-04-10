@@ -112,7 +112,7 @@ void setupPHYSFS()
 
 	#if defined(WIN32) || defined(__SWITCH__)
 		// Just write in installation directory
-		fs.setWriteDir("data");
+		fs.setWriteDir("./");
 	#else
 		#ifndef __ANDROID__
 			// Create a search path in the home directory and ensure that
@@ -186,9 +186,13 @@ void setupPHYSFS()
         int SDL_main(int argc, char* argv[])
 	#endif
 #else
+#ifdef __SWITCH__
+	int main(int argc, char* argv[])
+#else
 	#undef main
 	extern "C"
 	int main(int argc, char* argv[])
+#endif
 #endif
 {
 	DEBUG_STATUS("started main");
@@ -198,11 +202,17 @@ void setupPHYSFS()
 
 	DEBUG_STATUS("physfs initialised");
 
-	SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO | SDL_INIT_JOYSTICK);
+	//SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO | SDL_INIT_JOYSTICK);
+
+	if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_JOYSTICK) < 0) {
+        SDL_Log("SDL_Init: %s\n", SDL_GetError());
+        return -1;
+	}
 
 	DEBUG_STATUS("SDL initialised");
 
 	atexit(SDL_Quit);
+	
 	atexit([]()
 	{
 		gKillHostThread=true; 
@@ -214,12 +224,12 @@ void setupPHYSFS()
 #endif
 		}
 	});
+
 	srand(SDL_GetTicks());
 	// Default is OpenGL and false
 	// choose renderer
 	RenderManager *rmanager = 0;
 	SoundManager *smanager = 0;
-
 
 	// Test Version Startup Warning
 	#ifdef TEST_VERSION
@@ -242,17 +252,16 @@ void setupPHYSFS()
 								"Visit blobby.sourceforge.net for more information or bug reporting.").c_str(), 0);
 	#endif
 
-	try
-	{
 		UserConfig gameConfig;
 		gameConfig.loadFile("config.xml");
+
 
 		TextManager::createTextManager(gameConfig.getString("language"));
 
 		if(gameConfig.getString("device") == "SDL")
 			rmanager = RenderManager::createRenderManagerSDL();
-		/*else if (gameConfig.getString("device") == "GP2X")
-			rmanager = RenderManager::createRenderManagerGP2X();*/
+		//else if (gameConfig.getString("device") == "GP2X")
+			//rmanager = RenderManager::createRenderManagerGP2X();
 #ifndef __ANDROID__
 	#ifndef __APPLE__
 		else if (gameConfig.getString("device") == "OpenGL")
@@ -277,17 +286,20 @@ void setupPHYSFS()
 	#endif
 #endif
 
+	
 		// fullscreen?
-		if(gameConfig.getString("fullscreen") == "true")
+		/*if(gameConfig.getString("fullscreen") == "true")
 			rmanager->init(BASE_RESOLUTION_X, BASE_RESOLUTION_Y, true);
 		else
-			rmanager->init(BASE_RESOLUTION_X, BASE_RESOLUTION_Y, false);
+			rmanager->init(BASE_RESOLUTION_X, BASE_RESOLUTION_Y, false);*/
+
+		rmanager->init(BASE_RESOLUTION_X, BASE_RESOLUTION_Y, true);
 
 		if(gameConfig.getString("show_shadow") == "true")
 			rmanager->showShadow(true);
 		else
 			rmanager->showShadow(false);
-
+		
 		SpeedController scontroller(gameConfig.getFloat("gamefps"));
 		SpeedController::setMainInstance(&scontroller);
 		scontroller.setDrawFPS(gameConfig.getBool("showfps"));
@@ -299,7 +311,7 @@ void setupPHYSFS()
 		/// \todo play sound is misleading. what we actually want to do is load the sound
 		smanager->playSound("sounds/bums.wav", 0.0);
 		smanager->playSound("sounds/pfiff.wav", 0.0);
-
+		
 		std::string bg = std::string("backgrounds/") + gameConfig.getString("background");
 		if ( FileSystem::getSingleton().exists(bg) )
 			rmanager->setBackground(bg);
@@ -308,9 +320,10 @@ void setupPHYSFS()
 		int running = 1;
 
 		DEBUG_STATUS("starting mainloop");
-
+		
 		while (running)
 		{
+			
 			inputmgr->updateInput();
 			running = inputmgr->running();
 
@@ -320,6 +333,7 @@ void setupPHYSFS()
 			//draw FPS:
 			static int lastfps = 0;
 			static int lastlag = -1;
+			
 			if (scontroller.getDrawFPS())
 			{
 				// We need to ensure that the title bar is only set
@@ -358,20 +372,14 @@ void setupPHYSFS()
 				rmanager->refresh();
 			}
 			scontroller.update();
+			
 		}
-	}
-	catch (std::exception& e)
-	{
-		std::cerr << e.what() << std::endl;
-		SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_ERROR, "Error", (std::string("An error occurred, blobby will close: ") + e.what()).c_str(), 0);
-		if (rmanager)
-			rmanager->deinit();
-		if (smanager)
-			smanager->deinit();
-		SDL_Quit();
-		exit (EXIT_FAILURE);
-	}
+	
+
 
 	deinit();
 	exit(EXIT_SUCCESS);
+	
+
+	return 0;
 }

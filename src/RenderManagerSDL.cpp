@@ -98,7 +98,7 @@ void RenderManagerSDL::init(int xResolution, int yResolution, bool fullscreen)
 	Uint32 screenFlags = 0;
 	if (fullscreen)
 	{
-		screenFlags |= SDL_WINDOW_FULLSCREEN;
+		// screenFlags |= SDL_WINDOW_FULLSCREEN;
 	}
 	else
 	{
@@ -111,15 +111,8 @@ void RenderManagerSDL::init(int xResolution, int yResolution, bool fullscreen)
 		xResolution, yResolution,
 		screenFlags);
 
-	// Set icon
-	SDL_Surface* icon = loadSurface("Icon.bmp");
-	SDL_SetColorKey(icon, SDL_TRUE,
-			SDL_MapRGB(icon->format, 0, 0, 0));
-	SDL_SetWindowIcon(mWindow, icon);
-	SDL_FreeSurface(icon);
-
 	// Create renderer to draw in window
-	mRenderer = SDL_CreateRenderer(mWindow, -1, 0);
+	mRenderer = SDL_CreateRenderer(mWindow, 0, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
 
 	// Hide mousecursor
 	SDL_ShowCursor(0);

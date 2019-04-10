@@ -78,7 +78,7 @@ InputDevice* InputManager::beginGame(PlayerSide side) const
 	config.loadFile("inputconfig.xml");
 	// determine which device is to be used
 	std::string device = config.getString(prefix + "device");
-
+	
 	// load config for mouse
 	if (device == "mouse")
 	{
@@ -110,7 +110,7 @@ InputDevice* InputManager::beginGame(PlayerSide side) const
 	}
 	else
 		std::cerr << "Error: unknown input device: " << device << std::endl;
-
+	
 	return 0;
 }
 

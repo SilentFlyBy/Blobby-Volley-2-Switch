@@ -20,5 +20,7 @@ set(CMAKE_FIND_ROOT_PATH_MODE_LIBRARY ONLY)
 set(CMAKE_FIND_ROOT_PATH_MODE_INCLUDE ONLY)
 set(CMAKE_FIND_ROOT_PATH_MODE_PACKAGE ONLY)
 
+set(CMAKE_PREFIX_PATH ${CMAKE_PREFIX_PATH} ${DEVKITPRO}/portlibs/switch/lib/cmake)
+
 set(BUILD_SHARED_LIBS OFF CACHE INTERNAL "Shared libs not available")
 link_directories(${DEVKITPRO}/libnx/lib ${DEVKITPRO}/portlibs/switch/lib)

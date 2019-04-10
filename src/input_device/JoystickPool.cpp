@@ -33,7 +33,7 @@ SDL_Joystick* JoystickPool::getJoystick(int id)
 
 void JoystickPool::probeJoysticks()
 {
-	/*
+	
 	int numJoysticks = SDL_NumJoysticks();
 	SDL_Joystick* lastjoy;
 	for(int i = 0; i < numJoysticks; i++)
@@ -45,7 +45,7 @@ void JoystickPool::probeJoysticks()
 
 		mJoyMap[SDL_JoystickInstanceID(lastjoy)] = lastjoy;
 	}
-	*/
+	
 }
 
 void JoystickPool::openJoystick(const int joyIndex)
@@ -187,6 +187,26 @@ KeyAction JoystickAction::toKeyAction()
 			//return JoystickEvent::BACK;
 			// We don't allow back at the moment -> game is not leavable
 			return KeyAction::NONE;
+		}
+		if(number == 12) 
+		{
+			return KeyAction::LEFT;
+		}
+		if(number == 13) 
+		{
+			return KeyAction::UP;
+		}
+		if(number == 14) 
+		{
+			return KeyAction::RIGHT;
+		}
+		if(number == 15) 
+		{
+			return KeyAction::DOWN;
+		}
+		if(number == 10)
+		{
+			return KeyAction::BACK;
 		}
 	}
 	return KeyAction::NONE;

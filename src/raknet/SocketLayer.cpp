@@ -353,11 +353,13 @@ void SocketLayer::GetMyIP(char ipList[10][16])
 	int count = 0;
 
 	// Get the hostname of the local maschine
+	#ifndef __SWITCH__
 	if (gethostname(hostname, sizeof(hostname)) == SOCKET_ERROR)
 	{
 		LOG("SocketLayer", "gethostname failed")
 		return ;
 	}
+	#endif
 
 	LOG("SocketLayer", "Host name is " << hostname)
 
