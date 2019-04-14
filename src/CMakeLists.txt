@@ -111,7 +111,7 @@ if (SWITCH)
 	target_link_libraries(blobby.elf lua raknet blobnet tinyxml ${RAKNET_LIBRARIES} ${PHYSFS_LIBRARY} ${OPENGL_LIBRARIES} ${SDL2_LIBRARIES} ${DEVKITPRO}/portlibs/switch/lib/libEGL.a ${DEVKITPRO}/portlibs/switch/lib/libdrm_nouveau.a ${DEVKITPRO}/portlibs/switch/lib/libglapi.a ${DEVKITPRO}/libnx/lib/libnx.a)
 	add_custom_command(
 		OUTPUT blobby.nro
-		COMMAND ${DEVKITPRO}/tools/bin/elf2nro blobby.elf blobby.nro --icon=${CMAKE_SOURCE_DIR}/data/Icon.jpg
+		COMMAND ${DEVKITPRO}/tools/bin/elf2nro blobby.elf blobby.nro --icon=${CMAKE_SOURCE_DIR}/data/Icon.jpg --nacp=${CMAKE_SOURCE_DIR}/blobby.nacp
 		DEPENDS blobby.elf)
 	add_custom_target(blobby ALL DEPENDS blobby.nro)
 else (SWITCH)
@@ -132,4 +132,6 @@ if (WIN32)
 	install(TARGETS blobby DESTINATION .)
 elseif (UNIX)
 	install(TARGETS blobby blobby-server DESTINATION bin)
+elseif (SWITCH)
+	install(FILES build/blobby.nro DESTINATION .)
 endif (WIN32)

@@ -9,7 +9,7 @@
 	<var name="left_blobby_keyboard_jump" value="w"/>
 	<var name="left_blobby_joystick_left" value="joy_0_axis_-1"/>
 	<var name="left_blobby_joystick_right" value="joy_0_axis_1"/>
-	<var name="left_blobby_joystick_jump" value="joy_0_axis_-2"/>
+	<var name="left_blobby_joystick_jump" value="joy_0_button_0"/>
 
 	<var name="right_blobby_device" value="joystick"/>
 	<var name="right_blobby_mouse_jumpbutton" value="1"/>
@@ -17,9 +17,9 @@
 	<var name="right_blobby_keyboard_left" value="left"/>
 	<var name="right_blobby_keyboard_right" value="right"/>
 	<var name="right_blobby_keyboard_jump" value="up"/>
-	<var name="right_blobby_joystick_left" value="joy_0_axis_-3"/>
-	<var name="right_blobby_joystick_right" value="joy_0_axis_3"/>
-	<var name="right_blobby_joystick_jump" value="joy_0_axis_-4"/>
+	<var name="right_blobby_joystick_left" value="joy_1_axis_-1"/>
+	<var name="right_blobby_joystick_right" value="joy_1_axis_1"/>
+	<var name="right_blobby_joystick_jump" value="joy_1_button_0"/>
 
 	<var name="blobby_touch_type" value="0"/>
 </userconfig>
