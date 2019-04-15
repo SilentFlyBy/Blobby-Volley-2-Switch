@@ -9,6 +9,9 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall")
 include_directories(.)
 
+set(APP_NAME "Blobby Volley 2")
+set(APP_AUTHOR "Erik Moldtmann")
+
 set(common_SRC
 	base64.cpp base64.h
 	BlobbyDebug.cpp BlobbyDebug.h
@@ -111,8 +114,12 @@ if (SWITCH)
 	target_link_libraries(blobby.elf lua raknet blobnet tinyxml ${RAKNET_LIBRARIES} ${PHYSFS_LIBRARY} ${OPENGL_LIBRARIES} ${SDL2_LIBRARIES} ${DEVKITPRO}/portlibs/switch/lib/libEGL.a ${DEVKITPRO}/portlibs/switch/lib/libdrm_nouveau.a ${DEVKITPRO}/portlibs/switch/lib/libglapi.a ${DEVKITPRO}/libnx/lib/libnx.a)
 	add_custom_command(
 		OUTPUT blobby.nro
-		COMMAND ${DEVKITPRO}/tools/bin/elf2nro blobby.elf blobby.nro --icon=${CMAKE_SOURCE_DIR}/data/Icon.jpg --nacp=${CMAKE_SOURCE_DIR}/blobby.nacp
-		DEPENDS blobby.elf)
+		COMMAND ${DEVKITPRO}/tools/bin/elf2nro blobby.elf blobby.nro --icon=${CMAKE_SOURCE_DIR}/data/Icon.jpg --nacp=blobby.nacp
+		DEPENDS blobby.elf blobby.nacp)
+	add_custom_command(
+		OUTPUT blobby.nacp
+		COMMAND ${DEVKITPRO}/tools/bin/nacptool --create "${APP_NAME}" "${APP_AUTHOR}" "${PROJECT_VERSION}" VERBATIM blobby.nacp
+	)
 	add_custom_target(blobby ALL DEPENDS blobby.nro)
 else (SWITCH)
 	add_executable(blobby ${blobby_SRC})
@@ -133,5 +140,5 @@ if (WIN32)
 elseif (UNIX)
 	install(TARGETS blobby blobby-server DESTINATION bin)
 elseif (SWITCH)
-	install(FILES build/blobby.nro DESTINATION .)
+	install(FILES ${CMAKE_CURRENT_BINARY_DIR}/blobby.nro DESTINATION .)
 endif (WIN32)

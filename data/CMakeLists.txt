@@ -31,7 +31,10 @@ set(install_files
 	lang_de.xml
 	lang_en.xml
 	lang_fr.xml
-	lang_it.xml)
+	lang_it.xml
+	api.lua
+	bot_api.lua
+	rules_api.lua)
 
 if (WIN32)
 	install(FILES ${install_files} DESTINATION data)
