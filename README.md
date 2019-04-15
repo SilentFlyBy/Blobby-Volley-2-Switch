@@ -4,7 +4,26 @@
 
 This is a port of the [popular Volleyball game](http://http://blobby.sourceforge.net/) you all know from the good old LAN-party days. This is still in heavy WIP, so expect some features to be broken.
 
-**What works:**
+## What works:
 + Local play with 2 full controllers ("full" means no "single-mode" Joycons)
 + Bots and custom bot scripts
 + Ruleset scripts
+
+## Building
+
+[devkitPro](https://switchbrew.org/wiki/Setting_up_Development_Environment) needs to be installed and completely configured.
+
+You also need to install through devkitPro's package manager:
++ SDL2
++ PhysFS
++ OpenGL
+
+Then run:
+
+```bash
+./configure-switch.sh
+cd build
+make && make install
+```
+
+The build output will be in `build/blobby`.
