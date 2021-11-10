@@ -1,3 +1,8 @@
+# ABANDONED
+
+This Repo is no longer maintained.
+Since the [original project moved to GitHub](https://github.com/danielknobe/blobbyvolley2), I made a [fork](https://github.com/SilentFlyBy/blobbyvolley2), which contains all the adjustments made for the switch and can be easily kept up to date with the original project.
+
 # Blobby Volley 2 for Nintendo Switch
 
 ![Logo](https://raw.githubusercontent.com/SilentFlyBy/Blobby-Volley-2-Switch/master/icon.png)
